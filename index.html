@@ -27,8 +27,19 @@
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in todoList" :key='todo.id'>
                     <span :class="{completed: todo.completed}">{{ todo.content }}</span>
-                    <button @click='markAsCompleted(todo)'>completed</button>
+                    <button @click='markAsCompleted(todo)' v-if='!todo.completed'>完成</button>
+                    <button @click='markAsUnCompleted(todo)' v-if='todo.completed'>未完成</button>
+                    <button @click='deleteAlert(todo)'>删除</button>
                 </div>
+                <div class="confirm">
+                    <div class="mask"></div>
+                    <div class="confirm-form">
+                        <div class="confirm-title">确认删除</div>
+                        <button class="confirm-delete">删除</button>
+                        <button class="confirm-cancel">取消</button>
+                    </div>
+                </div>
+
             </div>
         </template>
 

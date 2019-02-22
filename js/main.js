@@ -7,6 +7,8 @@ Vue.component('todo-list', {
             todoList: [
                 {id: 0, content: '1111', completed: false,},
                 {id: 1, content: '2222', completed: false,},
+                {id: 2, content: '3333', completed: false,},
+                {id: 3, content: '4444', completed: false,},
             ],
         }
     },
@@ -15,6 +17,13 @@ Vue.component('todo-list', {
             // log('todo', todo)
             todo.completed = true
         },
+        markAsUnCompleted: function(todo) {
+            todo.completed = false
+        },
+        deleteTodo: function(todo) {
+            let index = this.todoList.indexOf(todo)
+            this.todoList.splice(index, 1)
+        } 
     },
 })
 

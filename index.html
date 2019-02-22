@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>vue-todo</title>
+
+    <style>
+        .empty {
+            border-color: red;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #e6b0b0;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,7 +26,8 @@
             <div>
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in todoList" :key='todo.id'>
-                    <span>{{ todo.content }}</span>
+                    <span :class="{completed: todo.completed}">{{ todo.content }}</span>
+                    <button @click='markAsCompleted(todo)'>completed</button>
                 </div>
             </div>
         </template>
@@ -23,9 +35,13 @@
         <!-- add todo 组件 -->
         <template id="tpl-add-todo">
             <div>
-               <input v-model.trim='newTodoContent' @keyup.enter='addTodo()' type="text">
+               <input 
+                    :class="{empty: emptyChecked}"
+                    v-model.trim='newTodoContent'
+                    @keyup.enter='addTodo()'
+                    type="text">
                <button @click='addTodo()'>add</button>
-               <span v-if="newTodoContent === ''">请输入内容</span>
+               <span v-if="emptyChecked" style="color: red">请输入内容</span>
             </div>
         </template>
 
@@ -33,6 +49,7 @@
 
     <div id="todo-app">
         <todo-list></todo-list>
+        <hr>
         <todo-add></todo-add>
     </div>
 

@@ -10,6 +10,8 @@ Vue.component('todo-list', {
                 {id: 2, content: '3333', completed: false,},
                 {id: 3, content: '4444', completed: false,},
             ],
+            confirmAlert: false,
+            tmpTodo: '',
         }
     },
     methods: {
@@ -20,10 +22,18 @@ Vue.component('todo-list', {
         markAsUnCompleted: function(todo) {
             todo.completed = false
         },
-        deleteTodo: function(todo) {
-            let index = this.todoList.indexOf(todo)
+        deleteTodo: function() {
+            let index = this.todoList.indexOf(this.tmpTodo)
             this.todoList.splice(index, 1)
-        } 
+            // 重置
+            this.tmpTodo = ''
+            this.confirmAlert = false
+        },
+        deleteAlert(todo) {
+            this.confirmAlert = true
+            // 把要删除的 todo 保存为一个临时 tmpTodo
+            this.tmpTodo = todo
+        }
     },
 })
 

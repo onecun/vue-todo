@@ -16,11 +16,20 @@
             <div>
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in todoList" :key='todo.id'>
-                    <span :class="{completed: todo.completed}">{{ todo.content }}</span>
-                    <button @click='markAsCompleted(todo)' v-if='!todo.completed'>完成</button>
-                    <button @click='markAsUnCompleted(todo)' v-if='todo.completed'>未完成</button>
+                    <span   :class="{completed: todo.completed}"
+                            @dblclick='editTodo(todo)' >{{ todo.content }}</span>
+                    <button @click='markAsCompleted(todo)' 
+                            v-if='!todo.completed'>完成</button>
+                    <button @click='markAsUnCompleted(todo)' 
+                            v-if='todo.completed'>未完成</button>
                     <button @click='deleteAlert(todo)'>删除</button>
+                    <input  v-model="todo.content" 
+                            v-if="editedTodo !== null && editedTodo.id === todo.id"
+                            @keyup.enter="editDone(todo)"
+                            @keyup.esc="cancelEdit(todo)"
+                            type="text">
                 </div>
+
                 <!-- 弹出层 -->
                 <div v-if="confirmAlert" class="confirm">
                     <div class="mask"></div>
@@ -42,8 +51,8 @@
                     v-model.trim='newTodoContent'
                     @keyup.enter='addTodo()'
                     type="text">
-               <button @click='addTodo()'>add</button>
-               <span v-if="emptyChecked" style="color: red">请输入内容</span>
+               <button  @click='addTodo()'>add</button>
+               <span    v-if="emptyChecked" style="color: red">请输入内容</span>
             </div>
         </template>
 

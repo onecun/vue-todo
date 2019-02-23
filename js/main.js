@@ -33,12 +33,27 @@ Vue.component('todo-list', {
             editedTodo: null,
             // 即将删除的 todo
             deletedTodo: null,
-            // 编辑框自动 focus
-            focused: false,
         }
     },
 
     methods: {
+        // 所有 todo 标记为完成
+        markAllAsCompleted: function() {
+            this.todoList.map(function(todo) {
+                if (!todo.completed) {
+                    todo.completed = true
+                }
+            })
+        },
+
+        markAllAsUnCompleted: function() {
+            this.todoList.map(function(todo) {
+                if (todo.completed) {
+                    todo.completed = false
+                }
+            })
+        },
+
         markAsCompleted: function (todo) {
             // log('todo', todo)
             todo.completed = true
@@ -54,9 +69,7 @@ Vue.component('todo-list', {
                     id: todo.id,
                     content: todo.content,
                     completed: todo.completed,
-                },
-                // 自动 focus 编辑框
-                this.focused = true
+                }
         },
 
         editDone: function (todo) {
@@ -88,19 +101,13 @@ Vue.component('todo-list', {
     },
 
     // 定义 focus 指令
-    // directives: {
-    //     focus: {
-    //         updata: function (el, binding) {
-    //             let focused = binding.value
-    //             log('focused', focused)
-    //             if (focused) {
-    //                 log('el ', el)
-    //                 el.focus()
-    //                 log('focus if', focused)
-    //             }
-    //         },
-    //     },
-    // },
+    directives: {
+        focus: {
+            inserted: function (el, binding) {
+                el.focus()
+            }
+        },
+    },
 })
 
 

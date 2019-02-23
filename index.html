@@ -14,6 +14,9 @@
         <!-- 显示列表组件 -->
         <template id="tpl-show-todo">
             <div>
+                <!-- 全部标为完成 -->
+                <button @click="markAllAsCompleted">全部完成</button>
+                <button @click="markAllAsUnCompleted">全部未完成</button>
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in todoList" :key='todo.id'>
                     <span   :class="{completed: todo.completed}"
@@ -25,6 +28,7 @@
                     <button @click='deleteAlert(todo)'>删除</button>
                     <input  v-model="todo.content" 
                             v-if="editedTodo !== null && editedTodo.id === todo.id"
+                            v-focus="true"
                             @keyup.enter="editDone(todo)"
                             @keyup.esc="cancelEdit(todo)"
                             type="text">

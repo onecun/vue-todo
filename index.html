@@ -14,17 +14,33 @@
         <!-- 显示列表组件 -->
         <template id="tpl-show-todo">
             <div>
+                <!-- 筛选需要显示的 todo -->
+                <div>
+                    <button @click="intention = 'all'" 
+                            :class="{selected: intention === 'all'}">显示全部</button>
+                    <button @click="intention = 'ongoing'"
+                            :class="{selected: intention === 'ongoing'}">显示未完成</button>
+                    <button @click="intention = 'completed'"
+                            :class="{selected: intention === 'completed'}">显示已完成</button>
+                </div>
+                <hr>
                 <!-- 全部标为完成 -->
-                <button @click="markAllAsCompleted">全部完成</button>
-                <button @click="markAllAsUnCompleted">全部未完成</button>
+                <div>   
+                    <button @click="markAllAsCompleted">全部完成</button>
+                    <button @click="markAllAsUnCompleted">全部未完成</button>
+                </div>
+                <hr>
+                <!-- 未完成 todo 数 -->
+                <span>剩余{{leftTodoCount}}个任务， 未完成</span>
+                <hr>
                 <!-- v-for 指令不能用于根元素 -->
-                <div v-for="todo in todoList" :key='todo.id'>
+                <div v-for="todo in filteredTodoList" :key='todo.id'>
                     <span   :class="{completed: todo.completed}"
                             @dblclick='editTodo(todo)' >{{ todo.content }}</span>
                     <button @click='markAsCompleted(todo)' 
                             v-if='!todo.completed'>完成</button>
                     <button @click='markAsUnCompleted(todo)' 
-                            v-if='todo.completed'>未完成</button>
+                            v-if='todo.completed'>取消完成</button>
                     <button @click='deleteAlert(todo)'>删除</button>
                     <input  v-model="todo.content" 
                             v-if="editedTodo !== null && editedTodo.id === todo.id"

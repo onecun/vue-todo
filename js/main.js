@@ -33,6 +33,8 @@ Vue.component('todo-list', {
             editedTodo: null,
             // 即将删除的 todo
             deletedTodo: null,
+            // 用于保存 筛选显示 todo 的状态
+            intention: 'all',
         }
     },
 
@@ -93,10 +95,46 @@ Vue.component('todo-list', {
             this.confirmAlert = false
         },
 
-        deleteAlert(todo) {
+        deleteAlert: function(todo) {
             this.confirmAlert = true
             // 把要删除的 todo 保存为一个临时 tmpTodo
             this.deletedTodo = todo
+        },
+
+    },
+
+    // 计算属性
+    computed: {
+        // 剩余未完成 todo
+        leftTodo: function() {
+            let unCompletedTodo = this.todoList.filter(function(todo) {
+                return !todo.completed
+            })
+            return unCompletedTodo
+        },
+        leftTodoCount: function() {
+            return this.leftTodo.length
+        },
+        // 已完成的 todo
+        completedTodo: function() {
+            return this.todoList.filter(function(todo) {
+                return todo.completed
+            })
+    
+        },
+
+        // 筛选 todo
+        filteredTodoList: function() {
+            if (this.intention === 'ongoing') {
+                return this.leftTodo
+            } else if (this.intention === 'completed') {
+                return this.completedTodo
+            } else {
+                // 其它未定义的意图我们为其返回全部 todos，
+                // 这里面已经包含了 all 意图了
+                return this.todoList
+            }
+            
         }
     },
 

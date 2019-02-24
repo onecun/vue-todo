@@ -33,47 +33,53 @@ Vue.component('todo-list', {
             editedTodo: null,
             // 即将删除的 todo
             deletedTodo: null,
-            // 用于保存 筛选显示 todo 的状态
+            // 用于保存 筛选删除的状态 (all, singel, completed)
+            deletedState: null,
+            // 用于保存 筛选显示 todo 的状态 (all, ongoing, completed)
             intention: 'all',
         }
     },
 
     methods: {
         // 所有 todo 标记为完成
-        markAllAsCompleted: function() {
-            this.todoList.map(function(todo) {
+        markAllAsCompleted: function () {
+            this.todoList.map(function (todo) {
                 if (!todo.completed) {
                     todo.completed = true
                 }
             })
         },
-
-        markAllAsUnCompleted: function() {
-            this.todoList.map(function(todo) {
+        // 所有 todo 标记为 未完成
+        markAllAsUnCompleted: function () {
+            this.todoList.map(function (todo) {
                 if (todo.completed) {
                     todo.completed = false
                 }
             })
         },
 
+        // 标记单个 todo为 完成
         markAsCompleted: function (todo) {
             // log('todo', todo)
             todo.completed = true
         },
 
+        // 标记单个 todo为 未完成
         markAsUnCompleted: function (todo) {
             todo.completed = false
         },
 
+        // 编辑 todo
         editTodo: function (todo) {
             // log('edittodo', todo.content)
             this.editedTodo = {
-                    id: todo.id,
-                    content: todo.content,
-                    completed: todo.completed,
-                }
+                id: todo.id,
+                content: todo.content,
+                completed: todo.completed,
+            }
         },
 
+        // 编辑完成后检查
         editDone: function (todo) {
             // 判断编辑后的 todo 是否为空
             if (todo.content === '') {
@@ -82,49 +88,99 @@ Vue.component('todo-list', {
             this.editedTodo = null
         },
 
+        // 取消编辑,还原 todo
         cancelEdit: function (todo) {
             todo.content = this.editedTodo.content
             this.editedTodo = null
         },
-
-        deleteTodo: function () {
+        
+        // 主删除
+        mainDelete: function () {
+            if (this.deletedState === 'all') {
+                this.deleteAll()
+            } else if (this.deletedState === 'completed') {
+                this.deleteCompleted()
+            } else if (this.deletedState === 'single') {
+                this.deleteSingelTodo()
+            }
+            // log('deletedState', deletedState)
+        },
+        // 重置状态
+        reset: function () {
+            this.deletedTodo = null
+            this.confirmAlert = false
+            this.deletedState = null
+        },
+        // 点击删除全部 button 时
+        deletedAllClick: function () {
+            this.confirmAlert = true
+            this.deletedState = 'all'
+        },
+        // 点击删除全部已完成 button 时
+        deletedCompletedClick: function () {
+            this.confirmAlert = true
+            this.deletedState = 'completed'
+        },
+        // 单个 todo 删除
+        deleteSingelTodo: function () {
             let index = this.todoList.indexOf(this.deletedTodo)
             this.todoList.splice(index, 1)
             // 重置
-            this.deletedTodo = null
-            this.confirmAlert = false
+            this.reset()
         },
-
-        deleteAlert: function(todo) {
+        // 删除单个 todo 时,确认
+        deleteSingleAlert: function (todo) {
             this.confirmAlert = true
+            this.deletedState = 'single'
             // 把要删除的 todo 保存为一个临时 tmpTodo
             this.deletedTodo = todo
         },
-
+        // 删除全部
+        deleteAll: function () {
+            this.todoList = []
+            // 重置
+            this.reset()
+        },
+        // 删除全部已完成
+        deleteCompleted: function () {
+            // 获取未完成的全部 todo
+            let unCompletedTodos = this.todoList.filter(function (todo) {
+                return !todo.completed
+            })
+            // 把已完成的 todo 覆盖掉
+            this.todoList = unCompletedTodos
+            // 重置
+            this.reset()
+        }
     },
 
     // 计算属性
     computed: {
+        // 剩余 todo 长度
+        remainTodoLength: function () {
+            return this.todoList.length
+        },
         // 剩余未完成 todo
-        leftTodo: function() {
-            let unCompletedTodo = this.todoList.filter(function(todo) {
+        leftTodo: function () {
+            let unCompletedTodo = this.todoList.filter(function (todo) {
                 return !todo.completed
             })
             return unCompletedTodo
         },
-        leftTodoCount: function() {
+        // 剩余未完成 todo 长度
+        leftTodoCount: function () {
             return this.leftTodo.length
         },
         // 已完成的 todo
-        completedTodo: function() {
-            return this.todoList.filter(function(todo) {
+        completedTodo: function () {
+            return this.todoList.filter(function (todo) {
                 return todo.completed
             })
-    
+
         },
 
         // 筛选 todo
-        filteredTodoList: function() {
+        filteredTodoList: function () {
             if (this.intention === 'ongoing') {
                 return this.leftTodo
             } else if (this.intention === 'completed') {
@@ -134,7 +190,7 @@ Vue.component('todo-list', {
                 // 这里面已经包含了 all 意图了
                 return this.todoList
             }
-            
+
         }
     },
 

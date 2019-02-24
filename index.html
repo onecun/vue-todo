@@ -31,7 +31,8 @@
                 </div>
                 <hr>
                 <!-- 未完成 todo 数 -->
-                <span>剩余{{leftTodoCount}}个任务， 未完成</span>
+                <span v-show="!(leftTodoCount === 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
+                <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
                 <hr>
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in filteredTodoList" :key='todo.id'>
@@ -41,7 +42,7 @@
                             v-if='!todo.completed'>完成</button>
                     <button @click='markAsUnCompleted(todo)' 
                             v-if='todo.completed'>取消完成</button>
-                    <button @click='deleteAlert(todo)'>删除</button>
+                    <button @click='deleteSingleAlert(todo)'>删除</button>
                     <input  v-model="todo.content" 
                             v-if="editedTodo !== null && editedTodo.id === todo.id"
                             v-focus="true"
@@ -49,13 +50,21 @@
                             @keyup.esc="cancelEdit(todo)"
                             type="text">
                 </div>
+                <hr>
+                <!-- 批量删除 -->
+                <div>
+                    <button @click="deletedAllClick"
+                            v-show="(remainTodoLength !== 0)">删除全部</button>
+                    <button @click="deletedCompletedClick"
+                            v-show="(remainTodoLength !== 0)">删除已完成</button>
+                </div>
 
                 <!-- 弹出层 -->
                 <div v-if="confirmAlert" class="confirm">
                     <div class="mask"></div>
                     <div class="confirm-form center">
                         <div class="confirm-title">确认删除</div>
-                        <button @click="deleteTodo()" class="confirm-delete">删除</button>
+                        <button @click="mainDelete()" class="confirm-delete">删除</button>
                         <button @click="confirmAlert = false" class="confirm-cancel">取消</button>
                     </div>
                 </div>

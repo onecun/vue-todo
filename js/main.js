@@ -1,26 +1,43 @@
 const log = console.log.bind(console)
-
+const todoStorage = {
+    key1: 'vue-todo',
+    key2: 'vue-todo-recycle',
+    loadTodos: function () {
+        let todos = JSON.parse(localStorage.getItem(this.key1) || '[]')
+        todos.forEach(function (todo, index) {
+            todo.id = index
+        })
+        return todos
+    },
+    loadRecycleBin: function () {
+        let todos = JSON.parse(localStorage.getItem(this.key2) || '[]')
+        todos.forEach(function (todo, index) {
+            todo.id = index
+        })
+        todoStorage.uid = todos.length + this.loadTodos().length
+        return todos
+    },
+    saveTodos: function (todos) {
+        localStorage.setItem(this.key1, JSON.stringify(todos))
+    },
+    saveRecycle: function (todos) {
+        localStorage.setItem(this.key2, JSON.stringify(todos))
+    },
+}
 
 Vue.component('todo-list', {
     template: '#tpl-show-todo',
 
     data: function () {
         return {
-            todoList: [{
-                    id: 0,
-                    content: '1111',
-                    completed: false,
-                    removed: false,
-                },
-                {
-                    id: 1,
-                    content: '2222',
-                    completed: false,
-                    removed: false,
-                },
-            ],
+            uid: todoStorage.uid || 0,
+            todoList: todoStorage.loadTodos(),
             // 回收站
-            recycleBin: [],
+            recycleBin: todoStorage.loadRecycleBin(),
+            // 
+            newTodoContent: '',
+            checkEmpty: false,
+            // 
             // 弹出层状态
             confirmAlert: false,
             // 用于暂存编辑前的 todo 状态
@@ -83,7 +100,7 @@ Vue.component('todo-list', {
             todo.content = this.editedTodo.content
             this.editedTodo = null
         },
-        
+
         // 主删除
         mainDelete: function () {
             let d = {
@@ -128,8 +145,9 @@ Vue.component('todo-list', {
         },
         // 删除全部
         deleteAll: function () {
-            let todos = this.todoList.map(function(todo) {
+            let todos = this.todoList.map(function (todo) {
                 todo.removed = true
+                return todo
             })
             this.recycleBin.push(...todos)
             this.todoList = []
@@ -142,8 +160,9 @@ Vue.component('todo-list', {
             let CompletedTodos = this.todoList.filter(function (todo) {
                 return todo.completed
             })
-            let todos = CompletedTodos.map(function(todo) {
+            let todos = CompletedTodos.map(function (todo) {
                 todo.removed = true
+                return todo
             })
             this.recycleBin.push(...todos)
             // 在 todoList 里删除
@@ -155,13 +174,32 @@ Vue.component('todo-list', {
             this.reset()
         },
         // 还原 todo
-        restoreTodo: function(todo) {
+        restoreTodo: function (todo) {
             // 把 todo 重新添加到 todoList
             todo.removed = false
             this.todoList.push(todo)
             // 把 todo 从 recycleBin 里删除 
             let index = this.recycleBin.indexOf(todo)
             this.recycleBin.splice(index, 1)
+        },
+        addTodo: function () {
+            // 组装一个 new todo
+            let todo = {
+                id: this.uid++,
+                content: this.newTodoContent,
+                completed: false,
+                removed: false,
+            }
+            // 把 new todo 添加进 todoList
+            if (todo.content !== '') {
+                this.todoList.push(todo)
+                // 重置
+                this.newTodoContent = ''
+                this.checkEmpty = false
+            } else {
+                this.checkEmpty = true
+                return
+            }
         },
     },
 
@@ -198,13 +236,18 @@ Vue.component('todo-list', {
                 return this.completedTodo
             } else if (this.intention === 'removed') {
                 return this.recycleBin
-            } else{
+            } else {
                 // 其它未定义的意图我们为其返回全部 todos，
                 // 这里面已经包含了 all 意图了
                 return this.todoList
             }
 
+        },
+
+        emptyChecked: function () {
+            return this.checkEmpty
         }
+
     },
 
     // 定义 focus 指令
@@ -215,48 +258,17 @@ Vue.component('todo-list', {
             }
         },
     },
-})
-
-
-
-Vue.component('todo-add', {
-    template: '#tpl-add-todo',
-    data: function () {
-        return {
-            todoList: [],
-            newTodoContent: '',
-            checkEmpty: false,
-        }
-    },
-    methods: {
-        addTodo: function () {
-            // 得到新 todo 的 id
-            let newId = this.todoList.length
-            // 组装一个 new todo
-            let todo = {
-                id: newId,
-                content: this.newTodoContent,
-                completed: false,
-            }
-            // 把 new todo 添加进 todoList
-            if (todo.content !== '') {
-                this.todoList.push(todo)
-                // 重置
-                this.newTodoContent = ''
-                this.checkEmpty = false
-            } else {
-                this.checkEmpty = true
-                return
-            }
+    watch: {
+        todoList: function (todos) {
+            todoStorage.saveTodos(todos)
         },
-
-    },
-    computed: {
-        emptyChecked: function () {
-            return this.checkEmpty
-        }
+        recycleBin: function (todos) {
+            todoStorage.saveRecycle(todos)
+        },
     },
 })
+
+
 
 var app = new Vue({
     el: '#todo-app',

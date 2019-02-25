@@ -52,6 +52,11 @@ Vue.component('todo-list', {
     },
 
     methods: {
+        // 新增 todo 时，检查是否为空
+        emptyChecked: function () {
+            return this.checkEmpty
+        },
+        
         // 所有 todo 标记为完成
         markAllAsCompleted: function () {
             this.todoList.map(function (todo) {
@@ -244,10 +249,6 @@ Vue.component('todo-list', {
 
         },
 
-        emptyChecked: function () {
-            return this.checkEmpty
-        }
-
     },
 
     // 定义 focus 指令
@@ -258,6 +259,8 @@ Vue.component('todo-list', {
             }
         },
     },
+    // 监听数据改动
+    // 改动时，保存数据到 localStorage
     watch: {
         todoList: function (todos) {
             todoStorage.saveTodos(todos)

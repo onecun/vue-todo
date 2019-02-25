@@ -17,11 +17,13 @@
                 <!-- 筛选需要显示的 todo -->
                 <div>
                     <button @click="intention = 'all'" 
-                            :class="{selected: intention === 'all'}">显示全部</button>
+                            :class="{selected: intention === 'all'}">全部</button>
                     <button @click="intention = 'ongoing'"
-                            :class="{selected: intention === 'ongoing'}">显示未完成</button>
+                            :class="{selected: intention === 'ongoing'}">进行中</button>
                     <button @click="intention = 'completed'"
-                            :class="{selected: intention === 'completed'}">显示已完成</button>
+                            :class="{selected: intention === 'completed'}">已完成</button>
+                    <button @click="intention = 'removed'"
+                            :class="{selected: intention === 'removed'}">回收站</button>
                 </div>
                 <hr>
                 <!-- 全部标为完成 -->
@@ -31,7 +33,8 @@
                 </div>
                 <hr>
                 <!-- 未完成 todo 数 -->
-                <span v-show="!(leftTodoCount === 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
+                <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
+                <span v-show="(leftTodoCount !== 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
                 <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
                 <hr>
                 <!-- v-for 指令不能用于根元素 -->
@@ -42,7 +45,10 @@
                             v-if='!todo.completed'>完成</button>
                     <button @click='markAsUnCompleted(todo)' 
                             v-if='todo.completed'>取消完成</button>
-                    <button @click='deleteSingleAlert(todo)'>删除</button>
+                    <button @click='deleteSingleAlert(todo)'
+                            v-if="!todo.removed">删除</button>
+                    <button @click='restoreTodo(todo)'
+                            v-if="todo.removed">还原</button>
                     <input  v-model="todo.content" 
                             v-if="editedTodo !== null && editedTodo.id === todo.id"
                             v-focus="true"

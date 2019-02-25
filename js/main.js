@@ -10,23 +10,17 @@ Vue.component('todo-list', {
                     id: 0,
                     content: '1111',
                     completed: false,
+                    removed: false,
                 },
                 {
                     id: 1,
                     content: '2222',
                     completed: false,
-                },
-                {
-                    id: 2,
-                    content: '3333',
-                    completed: false,
-                },
-                {
-                    id: 3,
-                    content: '4444',
-                    completed: false,
+                    removed: false,
                 },
             ],
+            // 回收站
+            recycleBin: [],
             // 弹出层状态
             confirmAlert: false,
             // 用于暂存编辑前的 todo 状态
@@ -57,13 +51,11 @@ Vue.component('todo-list', {
                 }
             })
         },
-
         // 标记单个 todo为 完成
         markAsCompleted: function (todo) {
             // log('todo', todo)
             todo.completed = true
         },
-
         // 标记单个 todo为 未完成
         markAsUnCompleted: function (todo) {
             todo.completed = false
@@ -78,7 +70,6 @@ Vue.component('todo-list', {
                 completed: todo.completed,
             }
         },
-
         // 编辑完成后检查
         editDone: function (todo) {
             // 判断编辑后的 todo 是否为空
@@ -87,7 +78,6 @@ Vue.component('todo-list', {
             }
             this.editedTodo = null
         },
-
         // 取消编辑,还原 todo
         cancelEdit: function (todo) {
             todo.content = this.editedTodo.content
@@ -96,14 +86,12 @@ Vue.component('todo-list', {
         
         // 主删除
         mainDelete: function () {
-            if (this.deletedState === 'all') {
-                this.deleteAll()
-            } else if (this.deletedState === 'completed') {
-                this.deleteCompleted()
-            } else if (this.deletedState === 'single') {
-                this.deleteSingelTodo()
+            let d = {
+                all: this.deleteAll,
+                single: this.deleteSingelTodo,
+                completed: this.deleteCompleted,
             }
-            // log('deletedState', deletedState)
+            d[this.deletedState]()
         },
         // 重置状态
         reset: function () {
@@ -125,6 +113,9 @@ Vue.component('todo-list', {
         deleteSingelTodo: function () {
             let index = this.todoList.indexOf(this.deletedTodo)
             this.todoList.splice(index, 1)
+            // 把 deletedTodo 移到回收站 (即把 removed 属性改为 true)
+            this.deletedTodo.removed = true
+            this.recycleBin.push(this.deletedTodo)
             // 重置
             this.reset()
         },
@@ -137,24 +128,44 @@ Vue.component('todo-list', {
         },
         // 删除全部
         deleteAll: function () {
+            let todos = this.todoList.map(function(todo) {
+                todo.removed = true
+            })
+            this.recycleBin.push(...todos)
             this.todoList = []
             // 重置
             this.reset()
         },
         // 删除全部已完成
         deleteCompleted: function () {
-            // 获取未完成的全部 todo
+            // 获取完成的全部 todo
+            let CompletedTodos = this.todoList.filter(function (todo) {
+                return todo.completed
+            })
+            let todos = CompletedTodos.map(function(todo) {
+                todo.removed = true
+            })
+            this.recycleBin.push(...todos)
+            // 在 todoList 里删除
             let unCompletedTodos = this.todoList.filter(function (todo) {
                 return !todo.completed
             })
-            // 把已完成的 todo 覆盖掉
             this.todoList = unCompletedTodos
             // 重置
             this.reset()
-        }
+        },
+        // 还原 todo
+        restoreTodo: function(todo) {
+            // 把 todo 重新添加到 todoList
+            todo.removed = false
+            this.todoList.push(todo)
+            // 把 todo 从 recycleBin 里删除 
+            let index = this.recycleBin.indexOf(todo)
+            this.recycleBin.splice(index, 1)
+        },
     },
 
-    // 计算属性
+    // 计算属性 (计算属性是一个值)
     computed: {
         // 剩余 todo 长度
         remainTodoLength: function () {
@@ -185,7 +196,9 @@ Vue.component('todo-list', {
                 return this.leftTodo
             } else if (this.intention === 'completed') {
                 return this.completedTodo
-            } else {
+            } else if (this.intention === 'removed') {
+                return this.recycleBin
+            } else{
                 // 其它未定义的意图我们为其返回全部 todos，
                 // 这里面已经包含了 all 意图了
                 return this.todoList

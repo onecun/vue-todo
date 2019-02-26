@@ -10,6 +10,25 @@
 </head>
 
 <body>
+    <template id="todo-item-button-completed">
+        <span>
+            <button @click='markAsCompleted(todo)' 
+                    v-if='!todo.completed'>完成</button>
+            <button @click='markAsUnCompleted(todo)' 
+                    v-if='todo.completed'>取消完成</button>
+        </span>
+    </template>
+
+    <template id="todo-item-button-deleted">
+        <span>
+            <button @click='deleteSingleAlert(todo)'
+                    v-if="!todo.removed">删除</button>
+            <button @click='restoreTodo(todo)'
+                    v-if="todo.removed">还原</button>
+        </span>
+    </template>
+
+
     <div class="template">
         <!-- 显示列表组件 -->
         <template id="tpl-show-todo">
@@ -41,14 +60,16 @@
                 <div v-for="todo in filteredTodoList" :key='todo.id'>
                     <span   :class="{completed: todo.completed}"
                             @dblclick='editTodo(todo)' >{{ todo.content }}</span>
-                    <button @click='markAsCompleted(todo)' 
-                            v-if='!todo.completed'>完成</button>
-                    <button @click='markAsUnCompleted(todo)' 
-                            v-if='todo.completed'>取消完成</button>
-                    <button @click='deleteSingleAlert(todo)'
+
+                            <todo-item-button-completed :todo="todo"></todo-item-button-completed>
+                            <todo-item-button-deleted   :todo='todo'
+                                                        @delete-single-alert='deleteSingleAlert'
+                                                        @restore-todo='restoreTodo'></todo-item-button-deleted>
+
+                    <!-- <button @click='deleteSingleAlert(todo)'
                             v-if="!todo.removed">删除</button>
                     <button @click='restoreTodo(todo)'
-                            v-if="todo.removed">还原</button>
+                            v-if="todo.removed">还原</button> -->
                     <input  v-model="todo.content" 
                             v-if="editedTodo !== null && editedTodo.id === todo.id"
                             v-focus="true"
@@ -79,6 +100,7 @@
                     <input  :class="{empty: emptyChecked}"
                             v-model.trim='newTodoContent'
                             @keyup.enter='addTodo()'
+                            @blur='emptyChecked'
                             type="text">
                     <button  @click='addTodo()'>add</button>
                     <span v-if="emptyChecked" style="color: red">请输入内容</span>

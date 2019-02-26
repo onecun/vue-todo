@@ -52,10 +52,7 @@ Vue.component('todo-list', {
     },
 
     methods: {
-        // 新增 todo 时，检查是否为空
-        emptyChecked: function () {
-            return this.checkEmpty
-        },
+        
         
         // 所有 todo 标记为完成
         markAllAsCompleted: function () {
@@ -72,15 +69,6 @@ Vue.component('todo-list', {
                     todo.completed = false
                 }
             })
-        },
-        // 标记单个 todo为 完成
-        markAsCompleted: function (todo) {
-            // log('todo', todo)
-            todo.completed = true
-        },
-        // 标记单个 todo为 未完成
-        markAsUnCompleted: function (todo) {
-            todo.completed = false
         },
 
         // 编辑 todo
@@ -143,6 +131,7 @@ Vue.component('todo-list', {
         },
         // 删除单个 todo 时,确认
         deleteSingleAlert: function (todo) {
+            log('alert')
             this.confirmAlert = true
             this.deletedState = 'single'
             // 把要删除的 todo 保存为一个临时 tmpTodo
@@ -181,7 +170,8 @@ Vue.component('todo-list', {
         // 还原 todo
         restoreTodo: function (todo) {
             // 把 todo 重新添加到 todoList
-            todo.removed = false
+            // todo.removed = false
+            log('todo', todo)
             this.todoList.push(todo)
             // 把 todo 从 recycleBin 里删除 
             let index = this.recycleBin.indexOf(todo)
@@ -210,6 +200,11 @@ Vue.component('todo-list', {
 
     // 计算属性 (计算属性是一个值)
     computed: {
+        // 新增 todo 时，检查是否为空
+        emptyChecked: function () {
+            return this.checkEmpty
+        },
+
         // 剩余 todo 长度
         remainTodoLength: function () {
             return this.todoList.length
@@ -272,6 +267,50 @@ Vue.component('todo-list', {
 })
 
 
+
+Vue.component('todo-item-button-completed', {
+    template: '#todo-item-button-completed',
+    props: ['todo'],
+    methods: {
+        // 标记单个 todo为 完成
+        markAsCompleted: function (todo) {
+            // log('todo', todo)
+            todo.completed = true
+        },
+        // 标记单个 todo为 未完成
+        markAsUnCompleted: function (todo) {
+            todo.completed = false
+        },
+    },
+})
+
+Vue.component('todo-item-button-deleted', {
+    template: '#todo-item-button-deleted',
+    props: ['todo'],
+    methods: {
+         // 删除单个 todo 时,确认
+        deleteSingleAlert: function (todo) {
+            // let data = {
+            //     confirmAlert: true,
+            //     deletedState: 'single',
+            //     // 把要删除的 todo 保存为一个临时 tmpTodo
+            //     deletedTodo: todo,
+            // }
+            log('alert1')
+            this.$emit('delete-single-alert', todo)
+        },
+        // 还原 todo
+        restoreTodo: function (todo) {
+            // 把 todo 重新添加到 todoList
+            todo.removed = false
+            this.$emit('restore-todo', todo)
+            // this.todoList.push(todo)
+            // // 把 todo 从 recycleBin 里删除 
+            // let index = this.recycleBin.indexOf(todo)
+            // this.recycleBin.splice(index, 1)
+        },
+    },
+})
 
 var app = new Vue({
     el: '#todo-app',

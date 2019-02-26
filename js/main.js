@@ -15,6 +15,7 @@ const todoStorage = {
             todo.id = index
         })
         todoStorage.uid = todos.length + this.loadTodos().length
+        log('uid', todoStorage.uid)
         return todos
     },
     saveTodos: function (todos) {
@@ -40,8 +41,7 @@ Vue.component('todo-list', {
             // 
             // 弹出层状态
             confirmAlert: false,
-            // 用于暂存编辑前的 todo 状态
-            editedTodo: null,
+            
             // 即将删除的 todo
             deletedTodo: null,
             // 用于保存 筛选删除的状态 (all, singel, completed)
@@ -71,28 +71,7 @@ Vue.component('todo-list', {
             })
         },
 
-        // 编辑 todo
-        editTodo: function (todo) {
-            // log('edittodo', todo.content)
-            this.editedTodo = {
-                id: todo.id,
-                content: todo.content,
-                completed: todo.completed,
-            }
-        },
-        // 编辑完成后检查
-        editDone: function (todo) {
-            // 判断编辑后的 todo 是否为空
-            if (todo.content === '') {
-                this.deleteAlert(todo)
-            }
-            this.editedTodo = null
-        },
-        // 取消编辑,还原 todo
-        cancelEdit: function (todo) {
-            todo.content = this.editedTodo.content
-            this.editedTodo = null
-        },
+        
 
         // 主删除
         mainDelete: function () {
@@ -131,7 +110,6 @@ Vue.component('todo-list', {
         },
         // 删除单个 todo 时,确认
         deleteSingleAlert: function (todo) {
-            log('alert')
             this.confirmAlert = true
             this.deletedState = 'single'
             // 把要删除的 todo 保存为一个临时 tmpTodo
@@ -171,7 +149,6 @@ Vue.component('todo-list', {
         restoreTodo: function (todo) {
             // 把 todo 重新添加到 todoList
             // todo.removed = false
-            log('todo', todo)
             this.todoList.push(todo)
             // 把 todo 从 recycleBin 里删除 
             let index = this.recycleBin.indexOf(todo)
@@ -268,9 +245,15 @@ Vue.component('todo-list', {
 
 
 
-Vue.component('todo-item-button-completed', {
-    template: '#todo-item-button-completed',
+Vue.component('todo-item', {
+    template: '#todo-item',
     props: ['todo'],
+    data: function() {
+        return {
+            // 用于暂存编辑前的 todo 状态
+            editedTodo: null,
+        }
+    },
     methods: {
         // 标记单个 todo为 完成
         markAsCompleted: function (todo) {
@@ -281,22 +264,8 @@ Vue.component('todo-item-button-completed', {
         markAsUnCompleted: function (todo) {
             todo.completed = false
         },
-    },
-})
-
-Vue.component('todo-item-button-deleted', {
-    template: '#todo-item-button-deleted',
-    props: ['todo'],
-    methods: {
          // 删除单个 todo 时,确认
         deleteSingleAlert: function (todo) {
-            // let data = {
-            //     confirmAlert: true,
-            //     deletedState: 'single',
-            //     // 把要删除的 todo 保存为一个临时 tmpTodo
-            //     deletedTodo: todo,
-            // }
-            log('alert1')
             this.$emit('delete-single-alert', todo)
         },
         // 还原 todo
@@ -304,13 +273,33 @@ Vue.component('todo-item-button-deleted', {
             // 把 todo 重新添加到 todoList
             todo.removed = false
             this.$emit('restore-todo', todo)
-            // this.todoList.push(todo)
-            // // 把 todo 从 recycleBin 里删除 
-            // let index = this.recycleBin.indexOf(todo)
-            // this.recycleBin.splice(index, 1)
+        },
+        // 编辑 todo
+        editTodo: function (todo) {
+            // log('edittodo', todo.content)
+            this.editedTodo = {
+                id: todo.id,
+                content: todo.content,
+                completed: todo.completed,
+                removed: todo.removed,
+            }
+        },
+        // 编辑完成后检查
+        editDone: function (todo) {
+            // 判断编辑后的 todo 是否为空
+            if (todo.content === '') {
+                this.deleteSingleAlert(todo)
+            }
+            this.editedTodo = null
+        },
+        // 取消编辑,还原 todo
+        cancelEdit: function (todo) {
+            todo.content = this.editedTodo.content
+            this.editedTodo = null
         },
     },
 })
+
 
 var app = new Vue({
     el: '#todo-app',

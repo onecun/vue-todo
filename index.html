@@ -91,7 +91,6 @@
                     <input  :class="{empty: emptyChecked}"
                             v-model.trim='newTodoContent'
                             @keyup.enter='addTodo()'
-                            @blur='emptyChecked'
                             type="text">
                     <button  @click='addTodo()'>add</button>
                     <span v-if="emptyChecked" style="color: red">请输入内容</span>

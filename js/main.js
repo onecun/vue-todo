@@ -4,17 +4,21 @@ const todoStorage = {
     key2: 'vue-todo-recycle',
     loadTodos: function () {
         let todos = JSON.parse(localStorage.getItem(this.key1) || '[]')
-        todos.forEach(function (todo, index) {
-            todo.id = index
-        })
+        for (let i = 0; i < todos.length; i++) {
+            const todo = todos[i];
+            todo.id = i
+        }
         return todos
     },
     loadRecycleBin: function () {
         let todos = JSON.parse(localStorage.getItem(this.key2) || '[]')
-        todos.forEach(function (todo, index) {
-            todo.id = index
-        })
-        todoStorage.uid = todos.length + this.loadTodos().length
+        let len = todoStorage.loadTodos().length
+        for (let i = 0; i < todos.length; i++) {
+            const todo = todos[i];
+            todo.id = len
+            len++
+        }
+        todoStorage.uid = len
         log('uid', todoStorage.uid)
         return todos
     },
@@ -25,16 +29,16 @@ const todoStorage = {
         localStorage.setItem(this.key2, JSON.stringify(todos))
     },
 }
-
 Vue.component('todo-list', {
     template: '#tpl-show-todo',
 
     data: function () {
         return {
-            uid: todoStorage.uid || 0,
             todoList: todoStorage.loadTodos(),
             // 回收站
             recycleBin: todoStorage.loadRecycleBin(),
+            // uid 在 todoStorage.loadRecycleBin() 滞后， uid 才被定义
+            uid: todoStorage.uid || 0,
             // 
             newTodoContent: '',
             checkEmpty: false,
@@ -170,7 +174,6 @@ Vue.component('todo-list', {
                 this.checkEmpty = false
             } else {
                 this.checkEmpty = true
-                return
             }
         },
     },
@@ -223,22 +226,15 @@ Vue.component('todo-list', {
 
     },
 
-    // 定义 focus 指令
-    directives: {
-        focus: {
-            inserted: function (el, binding) {
-                el.focus()
-            }
-        },
-    },
+    
     // 监听数据改动
     // 改动时，保存数据到 localStorage
     watch: {
-        todoList: function (todos) {
-            todoStorage.saveTodos(todos)
+        todoList: function (todoList) {
+            todoStorage.saveTodos(todoList)
         },
-        recycleBin: function (todos) {
-            todoStorage.saveRecycle(todos)
+        recycleBin: function (recycleBin) {
+            todoStorage.saveRecycle(recycleBin)
         },
     },
 })
@@ -296,6 +292,14 @@ Vue.component('todo-item', {
         cancelEdit: function (todo) {
             todo.content = this.editedTodo.content
             this.editedTodo = null
+        },
+    },
+    // 定义 focus 指令
+    directives: {
+        focus: {
+            inserted: function (el, binding) {
+                el.focus()
+            }
         },
     },
 })

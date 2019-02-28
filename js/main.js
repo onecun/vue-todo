@@ -56,7 +56,9 @@ Vue.component('todo-list', {
     },
 
     methods: {
-        
+        changeIntention: function(newIntention) {
+            this.intention = newIntention
+        },
         
         // 所有 todo 标记为完成
         markAllAsCompleted: function () {
@@ -252,27 +254,28 @@ Vue.component('todo-item', {
     },
     methods: {
         // 标记单个 todo为 完成
-        markAsCompleted: function (todo) {
-            // log('todo', todo)
-            todo.completed = true
+        markAsCompleted: function () {
+            // log('todo', todo, this.todo)
+            this.todo.completed = true
         },
         // 标记单个 todo为 未完成
-        markAsUnCompleted: function (todo) {
-            todo.completed = false
+        markAsUnCompleted: function () {
+            this.todo.completed = false
         },
          // 删除单个 todo 时,确认
-        deleteSingleAlert: function (todo) {
-            this.$emit('delete-single-alert', todo)
+        deleteSingleAlert: function () {
+            this.$emit('delete-single-alert', this.todo)
         },
         // 还原 todo
-        restoreTodo: function (todo) {
+        restoreTodo: function () {
             // 把 todo 重新添加到 todoList
-            todo.removed = false
-            this.$emit('restore-todo', todo)
+            this.todo.removed = false
+            this.$emit('restore-todo', this.todo)
         },
         // 编辑 todo
-        editTodo: function (todo) {
+        editTodo: function () {
             // log('edittodo', todo.content)
+            let todo = this.todo
             this.editedTodo = {
                 id: todo.id,
                 content: todo.content,
@@ -281,16 +284,16 @@ Vue.component('todo-item', {
             }
         },
         // 编辑完成后检查
-        editDone: function (todo) {
+        editDone: function () {
             // 判断编辑后的 todo 是否为空
-            if (todo.content === '') {
-                this.deleteSingleAlert(todo)
+            if (this.todo.content === '') {
+                this.deleteSingleAlert(this.todo)
             }
             this.editedTodo = null
         },
         // 取消编辑,还原 todo
-        cancelEdit: function (todo) {
-            todo.content = this.editedTodo.content
+        cancelEdit: function () {
+            this.todo.content = this.editedTodo.content
             this.editedTodo = null
         },
     },
@@ -304,6 +307,16 @@ Vue.component('todo-item', {
     },
 })
 
+
+Vue.component('todo-menu-filter-show', {
+    template: '#todo-menu-filter-show',
+    props: ['intention'],
+    methods: {
+        changeIntention: function(newIntention) {
+            this.$emit('change-intention', newIntention)
+        },
+    },
+})
 
 var app = new Vue({
     el: '#todo-app',

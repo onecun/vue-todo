@@ -60,25 +60,6 @@ Vue.component('todo-list', {
             this.intention = newIntention
         },
         
-        // 所有 todo 标记为完成
-        markAllAsCompleted: function () {
-            this.todoList.map(function (todo) {
-                if (!todo.completed) {
-                    todo.completed = true
-                }
-            })
-        },
-        // 所有 todo 标记为 未完成
-        markAllAsUnCompleted: function () {
-            this.todoList.map(function (todo) {
-                if (todo.completed) {
-                    todo.completed = false
-                }
-            })
-        },
-
-        
-
         // 主删除
         mainDelete: function () {
             let d = {
@@ -94,15 +75,10 @@ Vue.component('todo-list', {
             this.confirmAlert = false
             this.deletedState = null
         },
-        // 点击删除全部 button 时
-        deletedAllClick: function () {
-            this.confirmAlert = true
-            this.deletedState = 'all'
-        },
-        // 点击删除全部已完成 button 时
-        deletedCompletedClick: function () {
-            this.confirmAlert = true
-            this.deletedState = 'completed'
+        // 
+        deleteClick: function(data) {
+            this.confirmAlert = data.confirmAlert
+            this.deletedState = data.deletedState
         },
         // 单个 todo 删除
         deleteSingelTodo: function () {
@@ -314,6 +290,46 @@ Vue.component('todo-menu-filter-show', {
     methods: {
         changeIntention: function(newIntention) {
             this.$emit('change-intention', newIntention)
+        },
+    },
+})
+
+Vue.component('todo-menu-batch-operation', {
+    template: '#todo-menu-batch-operation',
+    props: ['todoList',],
+    methods: {
+        // 所有 todo 标记为完成
+         markAllAsCompleted: function () {
+            this.todoList.map(function (todo) {
+                if (!todo.completed) {
+                    todo.completed = true
+                }
+            })
+        },
+        // 所有 todo 标记为 未完成
+        markAllAsUnCompleted: function () {
+            this.todoList.map(function (todo) {
+                if (todo.completed) {
+                    todo.completed = false
+                }
+            })
+        },
+        // 点击删除全部 button 时
+        deletedAllClick: function () {
+            let data = {
+                confirmAlert: true,
+                deletedState: 'all',
+            }
+            this.$emit('delete-click', data)
+            
+        },
+        // 点击删除全部已完成 button 时
+        deletedCompletedClick: function () {
+             let data = {
+                confirmAlert: true,
+                deletedState: 'completed',
+            }
+            this.$emit('delete-click', data)
         },
     },
 })

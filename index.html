@@ -44,6 +44,18 @@
         </div>
     </template>
 
+    <template id="todo-menu-batch-operation">
+        <div>
+            <!-- 批量操作 -->
+            <div>
+                <button @click="markAllAsCompleted">全部完成</button>
+                <button @click="markAllAsUnCompleted">全部未完成</button>
+                <button @click="deletedAllClick">删除全部</button>
+                <button @click="deletedCompletedClick">删除已完成</button>
+            </div>
+            
+        </div>
+    </template>
 
     <div class="template">
         <!-- 显示列表组件 -->
@@ -51,19 +63,20 @@
             <div>
                 <!-- 筛选需要显示的 todo -->
                 <todo-menu-filter-show  :intention="intention"
+                                        :todolist="todoList"
                                         @change-intention='changeIntention'></todo-menu-filter-show>
                 
                 <hr>
-                <!-- 全部标为完成 -->
-                <div>   
-                    <button @click="markAllAsCompleted">全部完成</button>
-                    <button @click="markAllAsUnCompleted">全部未完成</button>
-                </div>
+                <todo-menu-batch-operation  :todo-list="todoList"
+                                            @delete-click='deleteClick'
+                                            ></todo-menu-batch-operation>
                 <hr>
-                <!-- 未完成 todo 数 -->
-                <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
-                <span v-show="(leftTodoCount !== 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
-                <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
+                <!-- 未完成 todo 数 --> 
+                <div>
+                    <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
+                    <span v-show="(leftTodoCount !== 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
+                    <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
+                </div>
                 <hr>
                 <!-- v-for 指令不能用于根元素 -->
                 <div v-for="todo in filteredTodoList" :key='todo.id'>
@@ -72,17 +85,8 @@
                     <todo-item  :todo="todo"
                                 @delete-single-alert='deleteSingleAlert'
                                 @restore-todo='restoreTodo'></todo-item>
-
-                    
                 </div>
                 <hr>
-                <!-- 批量删除 -->
-                <div>
-                    <button @click="deletedAllClick"
-                            v-show="(remainTodoLength !== 0)">删除全部</button>
-                    <button @click="deletedCompletedClick"
-                            v-show="(remainTodoLength !== 0)">删除已完成</button>
-                </div>
 
                 <!-- 弹出层 -->
                 <div v-if="confirmAlert" class="confirm">

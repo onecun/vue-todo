@@ -203,3 +203,15 @@ body {
 .add-todo-error {
     display: inline-block;
 }
+
+.menu-batch {
+    display: inline;
+}
+
+.menu-batch > button {
+    width: 60px;
+    font-size: 10px;
+    padding: 0;
+    border: 0;
+    height: 20px;
+}

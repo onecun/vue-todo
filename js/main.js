@@ -154,6 +154,13 @@ Vue.component('todo-list', {
                 this.checkEmpty = true
             }
         },
+        saveTodo: function() {
+            todoStorage.saveTodos(this.todoList)
+        },
+        clearRecycleBin: function() {
+            log('aaa')
+            this.recycleBin = []
+        }
     },
 
     // 计算属性 (计算属性是一个值)
@@ -233,10 +240,12 @@ Vue.component('todo-item', {
         markAsCompleted: function () {
             // log('todo', todo, this.todo)
             this.todo.completed = true
+            this.$emit('todo-item-save')
         },
         // 标记单个 todo为 未完成
         markAsUnCompleted: function () {
             this.todo.completed = false
+            this.$emit('todo-item-save')
         },
          // 删除单个 todo 时,确认
         deleteSingleAlert: function () {
@@ -296,7 +305,7 @@ Vue.component('todo-menu-filter-show', {
 
 Vue.component('todo-menu-batch-operation', {
     template: '#todo-menu-batch-operation',
-    props: ['todoList',],
+    props: ['todoList', 'intention'],
     methods: {
         // 所有 todo 标记为完成
          markAllAsCompleted: function () {
@@ -305,6 +314,7 @@ Vue.component('todo-menu-batch-operation', {
                     todo.completed = true
                 }
             })
+            this.$emit('todo-save')
         },
         // 所有 todo 标记为 未完成
         markAllAsUnCompleted: function () {
@@ -313,6 +323,7 @@ Vue.component('todo-menu-batch-operation', {
                     todo.completed = false
                 }
             })
+            this.$emit('todo-save')
         },
         // 点击删除全部 button 时
         deletedAllClick: function () {
@@ -324,12 +335,15 @@ Vue.component('todo-menu-batch-operation', {
             
         },
         // 点击删除全部已完成 button 时
-        deletedCompletedClick: function () {
-             let data = {
-                confirmAlert: true,
-                deletedState: 'completed',
-            }
-            this.$emit('delete-click', data)
+        // clearRecycleBin: function () {
+        //      let data = {
+        //         confirmAlert: true,
+        //         deletedState: 'completed',
+        //     }
+        //     this.$emit('delete-click', data)
+        // },
+        clearRecycleBin: function () {
+            this.$emit('clear-recycle-bin')
         },
     },
 })

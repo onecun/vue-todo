@@ -33,16 +33,13 @@
     </template>
 
     <template id="todo-menu-batch-operation">
-        <div>
             <!-- 批量操作 -->
             <div>
-                <button @click="markAllAsCompleted">全部完成</button>
-                <button @click="markAllAsUnCompleted">全部未完成</button>
-                <button @click="deletedAllClick">删除全部</button>
-                <button @click="deletedCompletedClick">删除已完成</button>
+                <button @click="markAllAsCompleted" v-if="intention === 'ongoing'">全部完成</button>
+                <button @click="markAllAsUnCompleted" v-if="intention === 'completed'">全部未完成</button>
+                <button @click="deletedAllClick" v-if="intention === 'all'">删除全部</button>
+                <button @click="clearRecycleBin" v-if="intention === 'removed'">清理回收站</button>
             </div>
-
-        </div>
     </template>
 
     <div class="template">
@@ -54,13 +51,11 @@
                     @change-intention='changeIntention'></todo-menu-filter-show>
 
                 <div class="main-show-area">
-                    <todo-menu-batch-operation style="display: none" class="menu-batch" :todo-list="todoList"
-                        @delete-click='deleteClick'></todo-menu-batch-operation>
                     <!-- add new todo -->
-                    <div >
+                    <div>
                         <div class="add-todo-item">
-                            <input class="add-todo-input" :class="{empty: emptyChecked}" v-model.trim='newTodoContent' @keyup.enter='addTodo()'
-                                @blur='checkEmpty=false' type="text">
+                            <input class="add-todo-input" :class="{empty: emptyChecked}" v-model.trim='newTodoContent'
+                                @keyup.enter='addTodo()' @blur='checkEmpty=false' type="text">
                             <button class="add-todo-button" @click='addTodo()'>+</button>
                         </div>
                         <div>
@@ -73,10 +68,14 @@
                         <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
                         <span v-show="(leftTodoCount !== 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
                         <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
+
+                        <!-- 批量处理 -->
+                        <todo-menu-batch-operation class="menu-batch" :todo-list="todoList" :intention="intention"
+                            @delete-click='deleteClick' @todo-save='saveTodo' @clear-recycle-bin='clearRecycleBin'></todo-menu-batch-operation>
                     </div>
                     <!-- v-for 指令不能用于根元素 -->
                     <div v-for="todo in filteredTodoList" :key='todo.id'>
-                        <todo-item :todo="todo" @delete-single-alert='deleteSingleAlert' @restore-todo='restoreTodo'></todo-item>
+                        <todo-item :todo="todo" @delete-single-alert='deleteSingleAlert' @todo-item-save='saveTodo' @restore-todo='restoreTodo'></todo-item>
                     </div>
 
                     <!-- 弹出层 -->

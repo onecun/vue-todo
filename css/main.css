@@ -1,3 +1,7 @@
+body {
+    background: #444444;
+}
+
 .vertical-center {
     position: absolute;
     top: 50%;
@@ -80,4 +84,38 @@
 
 .confirm-cancel:hover {
     background: #bbb1b1;
+}
+
+.main-container {
+    padding: 30px;
+    overflow: hidden;
+    width: 40%;
+    margin: 0 auto;
+    background: #ffffff;
+}
+
+.menu-filter {
+    width: 30%;
+    float: left;
+    height: 100%;
+}
+
+.main-show-area {
+    width: 60%;
+    float: left;
+    height: 100%;
+}
+
+.menu-filter-item {
+    background-color: #4CAF50;
+    width: 100%;
+    border: 1px solid white;
+    color: white;
+    padding: 12px 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    border-radius: 5px;
+    outline: none;
 }

@@ -18,7 +18,7 @@
             <button class="todo-item-control" @click='markAsUnCompleted(todo)' v-if='todo.completed'>取消完成</button>
             <button class="todo-item-control" @click='deleteSingleAlert(todo)' v-if="!todo.removed">删除</button>
             <button class="todo-item-control" @click='restoreTodo(todo)' v-if="todo.removed">还原</button>
-            <input v-model="todo.content" v-if="editedTodo !== null && editedTodo.id === todo.id" v-focus="true"
+            <input v-model="todo.content" v-if="editedTodo !== null && editedTodo.id === todo.id" @blur='editedTodo = null' v-focus="true"
                 @keyup.enter="editDone(todo)" @keyup.esc="cancelEdit(todo)" type="text">
         </span>
     </template>

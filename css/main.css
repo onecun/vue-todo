@@ -81,11 +81,12 @@ body {
 }
 
 .main-container {
-    padding: 30px;
+    padding: 40px 20px 70px 20px;
     overflow: hidden;
     width: 40%;
-    margin: 0 auto;
+    margin: 20px auto;
     background: #ffffff;
+    border-radius: 12px;
 }
 
 /* 菜单 */
@@ -189,6 +190,7 @@ body {
     font-size: 26px;
     cursor: pointer;
     outline: none;
+    color: white;
 }
 .add-todo-button:hover {
     background: #64b367;

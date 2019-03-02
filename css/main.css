@@ -166,3 +166,40 @@ body {
 .todo-item-control:hover {
     background-color: #4caf50;
 }
+
+/*  */
+.add-todo-item {
+    background: #44c767;
+    margin: 1px;
+    padding: 2px;
+    width: 100%;
+    display: inline-block;
+    border: 1px solid white;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.add-todo-button {
+    float: right;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #75d378;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    outline: none;
+}
+.add-todo-button:hover {
+    background: #64b367;
+}
+
+.add-todo-input {
+    float: left;
+    height: 25px;
+    width: 85%;
+}
+
+.add-todo-error {
+    display: inline-block;
+}

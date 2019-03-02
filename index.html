@@ -11,8 +11,9 @@
 
 <body>
     <template id="todo-item">
-        <span  class="todo-item">
-            <span class="todo-item-content"  :class="{completed: todo.completed}" @dblclick='editTodo(todo)'>{{ todo.content }}</span>
+        <span class="todo-item">
+            <span class="todo-item-content" :class="{completed: todo.completed}" @dblclick='editTodo(todo)'>{{
+                todo.content }}</span>
             <button class="todo-item-control" @click='markAsCompleted(todo)' v-if='!todo.completed'>完成</button>
             <button class="todo-item-control" @click='markAsUnCompleted(todo)' v-if='todo.completed'>取消完成</button>
             <button class="todo-item-control" @click='deleteSingleAlert(todo)' v-if="!todo.removed">删除</button>
@@ -53,14 +54,26 @@
                     @change-intention='changeIntention'></todo-menu-filter-show>
 
                 <div class="main-show-area">
-                    <todo-menu-batch-operation style="display: none" class="menu-batch" :todo-list="todoList" @delete-click='deleteClick'></todo-menu-batch-operation>
+                    <todo-menu-batch-operation style="display: none" class="menu-batch" :todo-list="todoList"
+                        @delete-click='deleteClick'></todo-menu-batch-operation>
+                    <!-- add new todo -->
+                    <div >
+                        <div class="add-todo-item">
+                            <input class="add-todo-input" :class="{empty: emptyChecked}" v-model.trim='newTodoContent' @keyup.enter='addTodo()'
+                                type="text">
+                            <button class="add-todo-button" @click='addTodo()'>+</button>
+                        </div>
+                        <div>
+                            <span class="add-todo-error" v-if="emptyChecked" style="color: red">请输入内容</span>
+                        </div>
+                    </div>
+                    <hr>
                     <!-- 未完成 todo 数 -->
                     <div>
                         <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
                         <span v-show="(leftTodoCount !== 0)">剩余{{leftTodoCount}}个任务， 未完成</span>
                         <span v-show="(leftTodoCount === 0 && remainTodoLength !== 0)">全部完成，牛逼！</span>
                     </div>
-                    <hr>
                     <!-- v-for 指令不能用于根元素 -->
                     <div v-for="todo in filteredTodoList" :key='todo.id'>
                         <todo-item :todo="todo" @delete-single-alert='deleteSingleAlert' @restore-todo='restoreTodo'></todo-item>
@@ -74,13 +87,6 @@
                             <button @click="mainDelete()" class="confirm-delete">删除</button>
                             <button @click="confirmAlert = false" class="confirm-cancel">取消</button>
                         </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <input :class="{empty: emptyChecked}" v-model.trim='newTodoContent' @keyup.enter='addTodo()'
-                            type="text">
-                        <button @click='addTodo()'>add</button>
-                        <span v-if="emptyChecked" style="color: red">请输入内容</span>
                     </div>
                 </div>
 

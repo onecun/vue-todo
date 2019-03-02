@@ -60,7 +60,7 @@
                     <div >
                         <div class="add-todo-item">
                             <input class="add-todo-input" :class="{empty: emptyChecked}" v-model.trim='newTodoContent' @keyup.enter='addTodo()'
-                                type="text">
+                                @blur='checkEmpty=false' type="text">
                             <button class="add-todo-button" @click='addTodo()'>+</button>
                         </div>
                         <div>

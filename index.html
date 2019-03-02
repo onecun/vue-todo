@@ -11,12 +11,12 @@
 
 <body>
     <template id="todo-item">
-        <span>
-            <span :class="{completed: todo.completed}" @dblclick='editTodo(todo)'>{{ todo.content }}</span>
-            <button @click='markAsCompleted(todo)' v-if='!todo.completed'>完成</button>
-            <button @click='markAsUnCompleted(todo)' v-if='todo.completed'>取消完成</button>
-            <button @click='deleteSingleAlert(todo)' v-if="!todo.removed">删除</button>
-            <button @click='restoreTodo(todo)' v-if="todo.removed">还原</button>
+        <span  class="todo-item">
+            <span class="todo-item-content"  :class="{completed: todo.completed}" @dblclick='editTodo(todo)'>{{ todo.content }}</span>
+            <button class="todo-item-control" @click='markAsCompleted(todo)' v-if='!todo.completed'>完成</button>
+            <button class="todo-item-control" @click='markAsUnCompleted(todo)' v-if='todo.completed'>取消完成</button>
+            <button class="todo-item-control" @click='deleteSingleAlert(todo)' v-if="!todo.removed">删除</button>
+            <button class="todo-item-control" @click='restoreTodo(todo)' v-if="todo.removed">还原</button>
             <input v-model="todo.content" v-if="editedTodo !== null && editedTodo.id === todo.id" v-focus="true"
                 @keyup.enter="editDone(todo)" @keyup.esc="cancelEdit(todo)" type="text">
         </span>
@@ -24,10 +24,10 @@
 
     <template id="todo-menu-filter-show">
         <div>
-            <button class="menu-filter-item" @click="changeIntention('all')" :class="{selected: intention === 'all'}">全部</button>
-            <button class="menu-filter-item" @click="changeIntention('ongoing')" :class="{selected: intention === 'ongoing'}">进行中</button>
-            <button class="menu-filter-item" @click="changeIntention('completed')" :class="{selected: intention === 'completed'}">已完成</button>
-            <button class="menu-filter-item" @click="changeIntention('removed')" :class="{selected: intention === 'removed'}">回收站</button>
+            <button class="menu-filter-item" @click="changeIntention('all')" :class="{selected: intention === 'all', unselected: intention !== 'all'}">全部</button>
+            <button class="menu-filter-item" @click="changeIntention('ongoing')" :class="{selected: intention === 'ongoing', unselected: intention !== 'ongoing'}">进行中</button>
+            <button class="menu-filter-item" @click="changeIntention('completed')" :class="{selected: intention === 'completed', unselected: intention !== 'completed'}">已完成</button>
+            <button class="menu-filter-item" @click="changeIntention('removed')" :class="{selected: intention === 'removed', unselected: intention !== 'removed'}">回收站</button>
         </div>
     </template>
 
@@ -53,8 +53,7 @@
                     @change-intention='changeIntention'></todo-menu-filter-show>
 
                 <div class="main-show-area">
-                    <todo-menu-batch-operation class="menu-batch" :todo-list="todoList" @delete-click='deleteClick'></todo-menu-batch-operation>
-                    <hr>
+                    <todo-menu-batch-operation style="display: none" class="menu-batch" :todo-list="todoList" @delete-click='deleteClick'></todo-menu-batch-operation>
                     <!-- 未完成 todo 数 -->
                     <div>
                         <span v-show="(remainTodoLength === 0)">添加第一个todo</span>
@@ -64,11 +63,8 @@
                     <hr>
                     <!-- v-for 指令不能用于根元素 -->
                     <div v-for="todo in filteredTodoList" :key='todo.id'>
-
-
                         <todo-item :todo="todo" @delete-single-alert='deleteSingleAlert' @restore-todo='restoreTodo'></todo-item>
                     </div>
-                    <hr>
 
                     <!-- 弹出层 -->
                     <div v-if="confirmAlert" class="confirm">

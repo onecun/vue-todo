@@ -15,18 +15,8 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.selected {
-    background: #ff00ff;
-    color: #ffffff;
-}
-
 .empty {
     border-color: red;
-}
-
-.completed {
-    text-decoration: line-through;
-    color: #e6b0b0;
 }
 
 .confirm {
@@ -50,7 +40,8 @@ body {
     padding: 12px;
     width: 240px;
     height: 100px;
-    background: #be8c8c;
+    background: #4CAF50;
+    border-radius: 5px;
 }
 
 .confirm-title {
@@ -63,27 +54,30 @@ body {
     float: left;
     width: 50%;
     color: #ffffff;
-    background: #ff0000;
-    border: 1px solid #ff0000;
+    background: #44c767;
     outline: none;
     cursor: pointer;
+    border: 1px solid white;
+    border-radius: 2px;
+}
+
+.confirm-delete:hover {
+    background: #61a363;
 }
 
 .confirm-cancel {
     float: left;
     width: 50%;
     color: #ffffff;
-    border: 1px solid #ffffff;
-    background: #daafaf;
+    background: #44c767;
     outline: none;
     cursor: pointer;
-}
-.confirm-delete:hover {
-    background: #ce7171;
+    border: 1px solid white;
+    border-radius: 2px;
 }
 
 .confirm-cancel:hover {
-    background: #bbb1b1;
+    background: #61a363;
 }
 
 .main-container {
@@ -94,6 +88,7 @@ body {
     background: #ffffff;
 }
 
+/* 菜单 */
 .menu-filter {
     width: 30%;
     float: left;
@@ -107,7 +102,6 @@ body {
 }
 
 .menu-filter-item {
-    background-color: #4CAF50;
     width: 100%;
     border: 1px solid white;
     color: white;
@@ -118,4 +112,57 @@ body {
     font-size: 14px;
     border-radius: 5px;
     outline: none;
+}
+
+.selected {
+    background-color: rgb(117, 211, 120);
+}
+
+.unselected {
+    background-color: #4CAF50;
+}
+
+/* 主内容区域 */
+.main-show-area {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid gray;
+}
+
+.todo-item {
+    margin: 1px;
+    padding: 2px;
+    width: 100%;
+    display: inline-block;
+    background: #4CAF50;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+}
+
+.todo-item-content {
+    width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.todo-item-control {
+    float: right;
+    background-color: #44c767;
+    border-radius: 1px;
+    cursor: pointer;
+    color: #ffffff;
+    border: 1px solid #4caf50;
+    outline: none;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: lightgray;
+}
+
+
+.todo-item-control:hover {
+    background-color: #4caf50;
 }

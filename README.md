@@ -5,5 +5,5 @@
 - 利用*localStorage*完成本地存储
 - *完成/取消/删除*等功能
 
-## demo 演示
+## demo 展示
 ![](https://github.com/onecun/vue-todo/blob/master/demo.png)

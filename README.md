@@ -1,8 +1,9 @@
 # vue-todo
 炒鸡好看的todo应用
 
----
-### 本地存储，功能完整，欢迎下载使用
+- 使用*Vue/ES6*开发
+- 利用*localStorage*完成本地存储
+- *完成/取消/删除*等功能
 
-## demo
+## demo 演示
 ![](https://github.com/onecun/vue-todo/blob/master/demo.png)
